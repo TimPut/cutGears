@@ -6,6 +6,11 @@
 iterations = 150; // increase for enhanced resolution beware: large numbers will take lots of time!
 verbose = true;   // set to false if no console output is desired
 
+$fa=0.4;
+$fs=0.4;
+cycloid = true;
+/* cycloid = false; */
+
 // help();  // display module prototypes
 // default values
 // z = 10; // teeth - beware: large numbers may take lots of time!
@@ -259,7 +264,8 @@ module gear2D(m = 1, z = 10, x = 0, w = 20, clearance = 0)
 
 module Rack(m = 2, z = 10, x = 0, w = 20, clearance = 0)
 {
-  polygon(rack(m, z, x, w, clearance)); 
+  if(cycloid) circleRack(m, z, x);
+  else polygon(rack(m, z, x, w, clearance));
 }
 
 function rack(m = 2, z = 10, x = 0, w = 20, clearance = 0) = 
@@ -273,3 +279,20 @@ function rack(m = 2, z = 10, x = 0, w = 20, clearance = 0) =
            [for(i=[-1:z], j=[0:3]) [o+i*PI+X[j], Y[j]]], 
            [[o+PI*(z+1)+c, r-c], [o+PI*(z+1)+c, r+5]]); 
 
+module circleRack(m = 2, z = 10, x = 0)
+  {
+    let (r = m*(z+0.5)/2 + x)
+    difference(){
+      union(){
+        polygon([[-m*PI,r+2*m],[-m*PI,r-m/PI],[(z+0.5)*m*PI,r-m/PI],[(z+0.5)*m*PI,r+2*m]]);
+        for (i = [-1:z]) {
+          translate([(i+0.5)*m*PI,r-m/PI,0])circle((m*PI/4));
+        }
+      }
+      union(){
+        for (i = [-2:z]) {
+          translate([i*m*PI,r-m/PI,0])circle((m*PI/4));
+        }
+      }
+    }
+  }
